@@ -3,30 +3,350 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Temporizador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Shoot Timer - Loop Trainer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-weight: bold;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Courier New', 'Monaco', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Container principal - estilo rústico */
+        .container {
+            background: #000000;
+            border: 2px solid #2a2a2a;
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        /* Header com logo */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #d4a259;
+            text-shadow: 0 0 5px rgba(212, 162, 89, 0.3);
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        /* Área do tempo padrão - DESTAQUE */
+        .default-section {
+            margin-bottom: 25px;
+        }
+
+        .default-card {
+            background: #0a0a0a;
+            border: 2px solid #d4a259;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .default-card:hover {
+            background: #d4a259;
+            border-color: #d4a259;
+        }
+
+        .default-card:hover .default-label,
+        .default-card:hover .default-value {
+            color: #000000;
+        }
+
+        .default-label {
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: #d4a259;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .default-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #d4a259;
+            line-height: 1;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .default-hint {
+            font-size: 9px;
+            color: #555;
+        }
+
+        /* Área de personalização */
+        .custom-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #050505;
+            border: 1px solid #1a1a1a;
+        }
+
+        .custom-label {
+            font-size: 10px;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .custom-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .custom-input-group input {
+            flex: 1;
+            background: #000;
+            border: 1px solid #2a2a2a;
+            color: #d4a259;
+            padding: 12px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            outline: none;
+        }
+
+        .custom-input-group input:focus {
+            border-color: #d4a259;
+        }
+
+        .custom-input-group button {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #d4a259;
+            padding: 12px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .custom-input-group button:hover {
+            background: #d4a259;
+            color: #000;
+            border-color: #d4a259;
+        }
+
+        /* Display principal - GRANDE e FOCADO */
+        .display-section {
+            margin-bottom: 30px;
+        }
+
+        .display {
+            background: #000000;
+            border: 2px solid #1a1a1a;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .display-number {
+            font-size: 120px;
+            font-weight: bold;
+            color: #d4a259;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 10px;
+            text-shadow: 0 0 10px rgba(212, 162, 89, 0.2);
+        }
+
+        .display-unit {
+            font-size: 14px;
+            color: #444;
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+
+        /* Botões de controle */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .controls button {
+            flex: 1;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            color: #ccc;
+            padding: 18px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .controls button:hover {
+            background: #1a1a1a;
+            border-color: #d4a259;
+            color: #d4a259;
+        }
+
+        .btn-start {
+            border-color: #d4a259 !important;
+            color: #d4a259 !important;
+        }
+
+        .btn-start:hover {
+            background: #d4a259 !important;
+            color: #000 !important;
+        }
+
+        .btn-stop {
+            border-color: #4a4a4a !important;
+        }
+
+        .btn-stop:hover {
+            border-color: #d4a259 !important;
+        }
+
+        /* Info atual */
+        .info-section {
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+            text-align: center;
+        }
+
+        .current-config {
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1px;
+            font-family: monospace;
+        }
+
+        .current-config strong {
+            color: #d4a259;
+            font-weight: normal;
+        }
+
+        .hint {
+            font-size: 9px;
+            color: #333;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .display-number {
+                font-size: 80px;
+                letter-spacing: 5px;
+            }
+            
+            .default-value {
+                font-size: 36px;
+            }
+            
+            .controls button {
+                padding: 12px;
+                font-size: 12px;
+                letter-spacing: 2px;
+            }
+        }
+
+        /* Remove setas do input number */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <h1>Temporizador</h1>
-    </header>
+    <div class="container">
+        <!-- Header com estilo de logo -->
+        <div class="header">
+            <div class="logo">◤ SHOOT TIMER ◢</div>
+            <div class="logo-sub">TRAINING MODE · LOOP SYSTEM</div>
+        </div>
 
-    <main>
-        <section>
-            <h2>Tempo</h2>
-
-            <div>
-                <input type="number" name="numberInput" id="numberInput">
-                <button type="button" onclick="startCount()">Start</button>
-                <button type="button" id="btnStop">Stop</button>
+        <!-- Card de tempo padrão (200s) - bem destacado -->
+        <div class="default-section">
+            <div class="default-card" onclick="setDefaultTime()">
+                <div class="default-label">⟡ DEFAULT MODE ⟡</div>
+                <div class="default-value">200</div>
+                <div class="default-hint">clique para usar · segundos</div>
             </div>
-            
-            <div class="displayCount">0</div>
-        </section>
-    </main>
+        </div>
 
+        <!-- Personalização de tempo -->
+        <div class="custom-section">
+            <div class="custom-label">⚙️ CUSTOM TIME</div>
+            <div class="custom-input-group">
+                <input type="number" id="customTimeInput" placeholder="DIGITE O TEMPO" min="1" max="999">
+                <button onclick="setCustomTime()">APLICAR</button>
+            </div>
+        </div>
+
+        <!-- Display principal - GRANDE -->
+        <div class="display-section">
+            <div class="display">
+                <div class="display-number" id="displayCount">0</div>
+                <div class="display-unit">SEGUNDOS</div>
+            </div>
+        </div>
+
+        <!-- Botões de controle -->
+        <div class="controls">
+            <button class="btn-start" onclick="startLoop()">▶ START</button>
+            <button class="btn-stop" onclick="stopLoop()">■ STOP</button>
+        </div>
+
+        <!-- Informações atuais -->
+        <div class="info-section">
+            <div class="current-config" id="currentConfig">
+                CONFIG: <strong>200</strong> · LOOP 1 → 200
+            </div>
+            <div class="hint">
+                BEEP AO COMPLETAR CICLO · LOOP INFINITO ATÉ STOP
+            </div>
+        </div>
+    </div>
+
+    <script src="JS/script.js"></script>
 </body>
-<script src="JS/script.js"></script>
 
 </html>
